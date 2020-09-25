@@ -1,0 +1,15 @@
+.idea
+/config
+/bot_info.txt
+/*.db
+/.DS_Store
+/__pycache__/
+/*.sqbpro
+
+#by Pyinstaller dirs and files:
+/dist
+/build
+/bot.spec
+
+#release files
+/config.py
