@@ -1,5 +1,4 @@
 .idea
-/config
 /bot_info.txt
 /*.db
 /.DS_Store

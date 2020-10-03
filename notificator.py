@@ -1,7 +1,6 @@
-from aiogram import Bot
+from bot import bot
 
-from config import TOKEN, CHAT_ID
-bot = Bot(TOKEN)
+from config import CHAT_ID
 
 from dbModel import DBModel
 from helperMethods import getDaysBetween

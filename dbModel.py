@@ -4,7 +4,7 @@ import os.path
 from helperMethods import printAllEmployees
 from config import *
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(BASE_DIR, "headpoind_bdays.db")
+db_path = os.path.join(BASE_DIR, DB_NAME)
 db = sqlite3.connect(db_path)
 c = db.cursor()
 

@@ -1,5 +1,6 @@
 TOKEN =''
 CHAT_ID = 0
+DB_NAME = "db_name.bd"
 MORNING_ALERT_HOUR = 11
 DAY_ALERT_HOUR = 15
 HELP_MESSAGE =  "УВАЖАЕМЫЙ ПОЛЬЗОВАТЕЛЬ! ВНИМАТЕЛЬНО ИСПОЛЬЗУЙ КОМАНДЫ, НЕ ВСЕ ПРОВЕРКИ НАСТРОЕНЫ\n\n"\
@@ -16,7 +17,13 @@ HELP_MESSAGE_RU = "УВАЖАЕМЫЙ ПОЛЬЗОВАТЕЛЬ! ВНИМАТЕЛ
                   "Получить информацию о сотруднике - $/findEmployee ИМЯ ФАМИЛИЯ$\n"\
                   "Добавить сотрудника - $/addEmployee ИМЯ ФАМИЛИЯ ОТЧЕСТВО ДЕНЬ_РОЖДЕНИЯ(MM-ДД)$\n"\
                   "Уволить сотрудника - $/deleteEmployee ID$\n"\
-                  "Проверить ближайшие Дни рождения (до 10 дней) - /checkBirthday."
+                  "Проверить ближайшие Дни рождения (до 10 дней) - /checkBirthday\n"\
+                  "Посмотреть примеры команд - /samples\n"
+
+HELP_SAMPLES_MESSAGE_RU = 'Примеры работы с информацией о сотрудниках\n' \
+                          '/findEmployee Петр Петров\n' \
+                          '/deleteEmployee 98\n'\
+                          '/addEmployee Петр Петров Петрович 12-30'
 
 ERR_DB_MESSAGE = 'Error: problem with database'
 ERR_DB_MESSAGE_RU = 'Ошибка: проблема с базой данных'

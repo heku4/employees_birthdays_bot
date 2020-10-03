@@ -28,15 +28,20 @@ def getSleepTime(morningHour, dayHour):
     hoursList.append(morningHour - int(now.hour))
     hoursList.append(dayHour - int(now.hour))
     try:
-        hour = min(h for h in hoursList if h >= 0)
+        hour = min(h for h in hoursList if h > 0)
     except:
         hour = min(h for h in hoursList if h < 0)
         hour = 24 + hour
     minutes = 60 - now.minute
     if hour > 0:
         seconds = (hour - 1) * 3600 + minutes * 60
+        print(f'{now.hour}:{now.minute}:{now.second}'
+              f' - time until alert: {seconds / 60} mins or {round((seconds/3600),2)} hours')
         return seconds
     else:
+        print(f'{now.hour}:{now.minute}:{now.second}'
+              f' - time until alert: {minutes} mins or {round((minutes/60),2)} hours')
         return minutes * 60
+
 
 

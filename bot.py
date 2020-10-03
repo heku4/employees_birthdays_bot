@@ -3,7 +3,7 @@ from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 import asyncio
 
-from debug_config import *
+from config import *
 from notificator import *
 from helperMethods import checkChatId, getSleepTime
 
@@ -13,13 +13,20 @@ dp = Dispatcher(bot)
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
-        await message.reply("Hi!\nIt works!")
+        await message.reply("Hi!\nBot on duty!")
 
 # ---------------------------------------- help -------------------------------------------------#
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
     if checkChatId(message.chat.id) == True:
         await message.reply(HELP_MESSAGE_RU)
+    else:
+        await message.reply("Access denied.")
+
+@dp.message_handler(commands=['samples'])
+async def process_help_samples(message: types.Message):
+    if checkChatId(message.chat.id) == True:
+        await message.reply(HELP_SAMPLES_MESSAGE_RU)
     else:
         await message.reply("Access denied.")
 
