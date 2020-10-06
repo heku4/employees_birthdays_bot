@@ -2,7 +2,7 @@ import sqlite3
 import os.path
 
 from helperMethods import printAllEmployees
-from bot import DB_NAME,ERR_DB_SEARCH_MESSAGE_RU,ERR_DB_MESSAGE_RU,DONE_DB_MESSAGE_RU
+from bot import DB_NAME, ERR_DB_SEARCH_MESSAGE_RU, ERR_DB_MESSAGE_RU, DONE_DB_MESSAGE_RU
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, DB_NAME)
