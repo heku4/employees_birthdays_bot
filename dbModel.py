@@ -2,7 +2,8 @@ import sqlite3
 import os.path
 
 from helperMethods import printAllEmployees
-from config import *
+from bot import DB_NAME,ERR_DB_SEARCH_MESSAGE_RU,ERR_DB_MESSAGE_RU,DONE_DB_MESSAGE_RU
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, DB_NAME)
 db = sqlite3.connect(db_path)
@@ -30,12 +31,12 @@ class DBModel:
             c.execute('INSERT INTO Employees(Name, SecondName, FatherName, BirthDay) VALUES (?, ?, ?, ?)',
                       data)
             db.commit()
-            return "Готово! Наслаждайтесь!"
+            return DONE_DB_MESSAGE_RU
         except sqlite3.Error as e:
             print(e)
             return ERR_DB_MESSAGE_RU
 
-    async def findEmployeeById(employeeData):
+    async def findEmployee(employeeData):
         try:
             data = tuple(map(str, employeeData.split(' ')))
             c.execute('SELECT * FROM Employees WHERE Employees.Name = ? AND Employees.SecondName = ?', data)

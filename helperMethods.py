@@ -1,5 +1,5 @@
 import datetime
-from config import CHAT_ID, MORNING_ALERT_HOUR, DAY_ALERT_HOUR
+from bot import CHAT_ID
 
 def getDaysBetween(dateOfBirth):
     today = datetime.date.today()
