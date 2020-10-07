@@ -1,8 +1,8 @@
 TOKEN = ""
-CHAT_ID = 0
+CHAT_IDS = []
 MORNING_ALERT_HOUR = 11
 DAY_ALERT_HOUR = 15
-DB_NAME = "bdays.db"
+DB_NAME = "headpoint_bdays.db"
 HELP_MESSAGE =  "For help type /help;\n"\
                 "To get all employees type /getAll;\n"\
                 "To find employee by id use $/findEmployee NAME SECONDNAME$;\n"\

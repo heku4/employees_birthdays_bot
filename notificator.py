@@ -1,5 +1,5 @@
 from bot import bot
-from bot import CHAT_ID
+from bot import CHAT_IDS
 from dbModel import DBModel
 from helperMethods import getDaysBetween
 

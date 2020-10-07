@@ -1,5 +1,5 @@
 import datetime
-from bot import CHAT_ID
+from bot import CHAT_IDS
 
 def getDaysBetween(dateOfBirth):
     today = datetime.date.today()
@@ -17,7 +17,7 @@ def printAllEmployees(rows):
     return formatRow
 
 def checkChatId(chatId):
-    if chatId == CHAT_ID:
+    if chatId in CHAT_IDS:
         return True
     else:
         return False
