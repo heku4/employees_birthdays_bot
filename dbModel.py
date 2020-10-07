@@ -2,7 +2,7 @@ import sqlite3
 import os.path
 
 from helperMethods import printAllEmployees
-from bot import DB_NAME, ERR_DB_SEARCH_MESSAGE_RU, ERR_DB_MESSAGE_RU, DONE_DB_MESSAGE_RU
+from bot import DB_NAME, DB_TABLE_NAME, ERR_DB_SEARCH_MESSAGE_RU, ERR_DB_MESSAGE_RU, DONE_DB_MESSAGE_RU
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, DB_NAME)
@@ -12,7 +12,7 @@ c = db.cursor()
 class DBModel:
     async def getAllEmployees(forPrint):
         try:
-            c.execute('SELECT * FROM Employees ORDER by Employees.BirthDay')
+            c.execute(f'SELECT * FROM {DB_TABLE_NAME} ORDER by {DB_TABLE_NAME}.BirthDay')
         except sqlite3.Error as e:
             print(e)
         rows = c.fetchall()
@@ -28,7 +28,7 @@ class DBModel:
     async def addEmployee(newEmployeeData):
         data = tuple(map(str, newEmployeeData.split(' ')))
         try:
-            c.execute('INSERT INTO Employees(Name, SecondName, FatherName, BirthDay) VALUES (?, ?, ?, ?)',
+            c.execute(f'INSERT INTO {DB_TABLE_NAME} (Name, SecondName, FatherName, BirthDay) VALUES (?, ?, ?, ?)',
                       data)
             db.commit()
             return DONE_DB_MESSAGE_RU
@@ -39,7 +39,7 @@ class DBModel:
     async def findEmployee(employeeData):
         try:
             data = tuple(map(str, employeeData.split(' ')))
-            c.execute('SELECT * FROM Employees WHERE Employees.Name = ? AND Employees.SecondName = ?', data)
+            c.execute(f'SELECT * FROM Employees WHERE {DB_TABLE_NAME}.Name = ? AND {DB_TABLE_NAME}.SecondName = ?', data)
         except sqlite3.Error as e:
             print(e)
 
@@ -54,7 +54,7 @@ class DBModel:
 
     async def deleteEmployee(employeeId):
         try:
-            c.execute(f'DELETE FROM Employees WHERE Employees.Id = {employeeId}')
+            c.execute(f'DELETE FROM {DB_TABLE_NAME} WHERE {DB_TABLE_NAME}.Id = {employeeId}')
             db.commit()
             return f"The employee #{employeeId} has been deleted"
         except sqlite3.Error as e:

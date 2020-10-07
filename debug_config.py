@@ -2,7 +2,9 @@ TOKEN = ""
 CHAT_IDS = []
 MORNING_ALERT_HOUR = 11
 DAY_ALERT_HOUR = 15
-DB_NAME = "headpoint_bdays.db"
+DB_NAME = "db_name.db"
+DB_TABLE_NAME = "table_name"
+
 HELP_MESSAGE =  "For help type /help;\n"\
                 "To get all employees type /getAll;\n"\
                 "To find employee by id use $/findEmployee NAME SECONDNAME$;\n"\
