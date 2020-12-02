@@ -25,10 +25,10 @@ async def prepareNotification(listOfBirthday):
         for emp in listOfBirthday:
             if emp[5] == 0:
                 responseMessage = f"Сегодня у {emp[2]} {emp[1]} День рождения!"
-                await bot.send_message(text=responseMessage, chat_id=CHAT_ID)
+                await bot.send_message(text=responseMessage, chat_id=CHAT_IDS[0])
             elif emp[5] == 5 or emp[5] == 10:
                 responseMessage = f"Через {emp[5]} дней у {emp[1]} {emp[2]} День рождения!"
-                await bot.send_message(text=responseMessage, chat_id=CHAT_ID)
+                await bot.send_message(text=responseMessage, chat_id=CHAT_IDS[0])
 
 async def sendListByBotCommand():
     listOfBirthdays=[]
@@ -37,10 +37,10 @@ async def sendListByBotCommand():
 
 
 async def prepareListToUser(listOfBirthdays):
-    await bot.send_message(text="Проверяем дни рождения коллег...", chat_id=CHAT_ID)
+    await bot.send_message(text="Проверяем дни рождения коллег...", chat_id=CHAT_IDS[0])
     if not listOfBirthdays:
         pass
     else:
         for emp in listOfBirthdays:
             responseMessage = f"Через {emp[5]} дней у {emp[1]} {emp[2]}"
-            await bot.send_message(text=responseMessage, chat_id=CHAT_ID)
+            await bot.send_message(text=responseMessage, chat_id=CHAT_IDS[0])
