@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BirthdayBot", "BirthdayBot\BirthdayBot.csproj", "{3DE832E3-057B-402C-A5B8-99B242019CAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3DE832E3-057B-402C-A5B8-99B242019CAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DE832E3-057B-402C-A5B8-99B242019CAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DE832E3-057B-402C-A5B8-99B242019CAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DE832E3-057B-402C-A5B8-99B242019CAD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
