@@ -61,7 +61,7 @@ public class Employee
         var currentDateTime = DateTime.Now;
         var currentDate = new DateOnly(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day);
 
-        var daysDifference = currentDate.DayNumber - _currentYearBirthDay.DayNumber;
+        var daysDifference = _currentYearBirthDay.DayNumber - currentDate.DayNumber;
 
         return daysDifference;
     }
