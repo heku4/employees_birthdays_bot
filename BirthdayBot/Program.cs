@@ -1,5 +1,6 @@
 using BirthdayBot;
 using BirthdayBot.Core.Services;
+using BirthdayBot.Core.Services.DbRepositiry;
 using Telegram.Bot;
 using Telegram.Bot.Services;
 
@@ -22,10 +23,14 @@ IHost host = Host.CreateDefaultBuilder(args)
                 TelegramBotClientOptions options = new(botConfig.BotToken);
                 return new TelegramBotClient(options, httpClient);
             });
+            
 
         services.AddScoped<UpdateHandler>();
         services.AddScoped<ReceiverService>();
         services.AddHostedService<PollingService>();
+        services.AddHostedService<BirthDayChecker>();
+        services.AddSingleton<BirthdayService>();
+        services.AddSingleton<SqliteEmployeesOperations>();
     })
     .Build();
 
