@@ -25,6 +25,32 @@ public class BirthdayService
         await _sqliteEmployeesOperations.RemoveEmployee(id, ct);
     }
     
+    public async Task<string> GetClosestBirthdays()
+    {
+        var employees = await _sqliteEmployeesOperations.GetAll();
+        var fiveDaysGuys = employees.Where(e => e.DaysBeforeBirthDate == 5);
+        var oneDayGuys = employees.Where(e => e.DaysBeforeBirthDate == 1);
+        var zeroDayGuys = employees.Where(e => e.DaysBeforeBirthDate == 0);
+
+        var sb = new StringBuilder();
+        if (fiveDaysGuys.Any())
+        {
+            sb.Append($"Через 5 дней День рождения у:{Environment.NewLine}{FormatEmployeesList(fiveDaysGuys.ToList())}{Environment.NewLine}");
+        }
+
+        if (oneDayGuys.Any())
+        {
+            sb.Append($"Завтра День рождения у:{Environment.NewLine}{FormatEmployeesList(oneDayGuys.ToList())}{Environment.NewLine}");
+        }
+
+        if (zeroDayGuys.Any())
+        {
+            sb.Append($"Сегодня День рождения у:{Environment.NewLine}{FormatEmployeesList(zeroDayGuys.ToList())}{Environment.NewLine}");
+        }
+        
+        return sb.ToString();
+    }
+    
     public async Task<string> GetBirthdays()
     {
         var employees = await _sqliteEmployeesOperations.GetAll();

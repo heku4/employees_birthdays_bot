@@ -117,7 +117,7 @@ public class SqliteEmployeesOperations
         await using var db = new SQLiteConnection($"Data Source={_connectionString}");
         try
         {
-            await db.OpenAsync();
+            await db.OpenAsync(ct);
             var command = db.CreateCommand();
             command.CommandText = $"INSERT INTO employees (name, day, month) VALUES (@fullName, @day, @month) ";
             command.Parameters.AddWithValue("@fullName", fullName).DbType = DbType.String;
@@ -144,7 +144,7 @@ public class SqliteEmployeesOperations
         await using var db = new SQLiteConnection($"Data Source={_connectionString}");
         try
         {
-            await db.OpenAsync();
+            await db.OpenAsync(ct);
             var command = db.CreateCommand();
             command.CommandText = $"DELETE FROM employees WHERE id = @id ";
             command.Parameters.AddWithValue("@id", id).DbType = DbType.Int32;

@@ -34,7 +34,7 @@ public class Employee
 
     public override string ToString()
     {
-        return $"{_id}:  {_name}   {_currentYearBirthDay.ToString("M")}";
+        return $"{_id} - {_name}   {_currentYearBirthDay.ToString("M")}";
     }
 
     private DateOnly GetCurrentBirthday()

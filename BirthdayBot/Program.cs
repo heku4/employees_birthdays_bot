@@ -34,6 +34,13 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
+var dbOperationsService = host.Services.GetService<SqliteEmployeesOperations>();
+if (!await dbOperationsService!.CheckConnection())
+{
+    Console.Error.WriteLine("No connection to the database");
+    Environment.Exit(1);
+}
+
 await host.RunAsync();
 
 #pragma warning disable CA1050 // Declare types in namespaces
