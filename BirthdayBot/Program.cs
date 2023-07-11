@@ -1,6 +1,6 @@
 using BirthdayBot;
 using BirthdayBot.Core.Services;
-using BirthdayBot.Core.Services.DbRepositiry;
+using BirthdayBot.Core.Services.DbRepository;
 using Telegram.Bot;
 using Telegram.Bot.Services;
 

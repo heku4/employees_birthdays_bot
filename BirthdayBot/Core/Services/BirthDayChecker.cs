@@ -1,6 +1,6 @@
 using BirthdayBot.Core.Models;
 using System.Data.SQLite;
-using BirthdayBot.Core.Services.DbRepositiry;
+using BirthdayBot.Core.Services.DbRepository;
 
 namespace BirthdayBot.Core.Services;
 
@@ -19,15 +19,14 @@ public class BirthDayChecker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        if (!await _sqliteEmployeesOperations.CheckConnection())
+        {
+            _logger.LogCritical("Connection to the DB failed");
+            Environment.Exit(1);
+        }
+        
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (!await _sqliteEmployeesOperations.CheckConnection())
-            {
-                _logger.LogCritical("Connection to the DB failed");
-                Environment.Exit(1);
-            }
-
-
             try
             {
                 await Task.Delay(1000, stoppingToken);

@@ -21,7 +21,7 @@ public class Employee
         }
 
         _birthMonth = birthMonth;
-        if (_birthDay < 1 || _birthDay > 11)
+        if (_birthMonth < 1 || _birthMonth > 12)
         {
             throw new ArgumentException($"Check birth month value of {_name}, id: {_id}");
         }
@@ -52,7 +52,6 @@ public class Employee
 
             return new DateOnly(currentYear, 3, 1);
         }
-
 
         return birthdayDate;
     }

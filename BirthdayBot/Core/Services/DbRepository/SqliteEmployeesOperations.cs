@@ -1,14 +1,13 @@
 using System.Data;
-using System.Data.SqlClient;
 using System.Data.SQLite;
 using BirthdayBot.Core.Models;
 
-namespace BirthdayBot.Core.Services.DbRepositiry;
+namespace BirthdayBot.Core.Services.DbRepository;
 
 public class SqliteEmployeesOperations
 {
     private readonly ILogger<SqliteEmployeesOperations> _logger;
-    private readonly string _connectionString = "./etc/b_bot.db";
+    private readonly string _connectionString = "etc/b_bot.db";
 
     public SqliteEmployeesOperations(ILogger<SqliteEmployeesOperations> logger)
     {
@@ -22,15 +21,18 @@ public class SqliteEmployeesOperations
         {
             await db.OpenAsync();
             var command = db.CreateCommand();
-            command.CommandText = "SELECT name FROM sqlite_master WHERE type='table'";
-            var reader = await command.ExecuteReaderAsync();
-
-            return reader.HasRows;
+            command.CommandText = "SELECT * FROM employees LIMIT 1";
+            await using var reader = await command.ExecuteReaderAsync();
+            return true;
         }
         catch (Exception e)
         {
             _logger.LogError(e.Message);
             return false;
+        }
+        finally
+        {
+            await db.CloseAsync();
         }
     }
 
@@ -42,7 +44,7 @@ public class SqliteEmployeesOperations
             await db.OpenAsync();
             var command = db.CreateCommand();
             command.CommandText = "SELECT * FROM employees ORDER BY month, day";
-            var reader = await command.ExecuteReaderAsync();
+            await using var reader = await command.ExecuteReaderAsync();
 
             var employees = new List<Employee>();
 
@@ -65,6 +67,10 @@ public class SqliteEmployeesOperations
         {
             _logger.LogError(e.Message);
             return new List<Employee>();
+        }
+        finally
+        {
+            await db.CloseAsync();
         }
     }
 
@@ -76,7 +82,7 @@ public class SqliteEmployeesOperations
             await db.OpenAsync();
             var command = db.CreateCommand();
             command.CommandText = $"SELECT * FROM employees WHERE month = {monthNumber} ORDER BY month, day";
-            var reader = await command.ExecuteReaderAsync();
+            await using var reader = await command.ExecuteReaderAsync();
 
             var employees = new List<Employee>();
 
@@ -100,9 +106,13 @@ public class SqliteEmployeesOperations
             _logger.LogError(e.Message);
             return new List<Employee>();
         }
+        finally
+        {
+            await db.CloseAsync();
+        }
     }
     
-    public async Task AddEmployee(string fullName, int dayNumber, int monthNumber)
+    public async Task AddEmployee(string fullName, int dayNumber, int monthNumber, CancellationToken ct)
     {
         await using var db = new SQLiteConnection($"Data Source={_connectionString}");
         try
@@ -113,16 +123,23 @@ public class SqliteEmployeesOperations
             command.Parameters.AddWithValue("@fullName", fullName).DbType = DbType.String;
             command.Parameters.AddWithValue("@day", dayNumber).DbType = DbType.Int32;
             command.Parameters.AddWithValue("@month", monthNumber).DbType = DbType.Int32;
-            
-            await command.ExecuteNonQueryAsync();
+
+            var transaction = await db.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+            await command.ExecuteNonQueryAsync(ct);
+            await transaction.CommitAsync(ct);
+
         }
         catch (Exception e)
         {
             _logger.LogError(e.Message);
         }
+        finally
+        {
+            await db.CloseAsync();
+        }
     }
     
-    public async Task RemoveEmployee(int id)
+    public async Task RemoveEmployee(int id, CancellationToken ct)
     {
         await using var db = new SQLiteConnection($"Data Source={_connectionString}");
         try
@@ -132,7 +149,9 @@ public class SqliteEmployeesOperations
             command.CommandText = $"DELETE FROM employees WHERE id = @id ";
             command.Parameters.AddWithValue("@id", id).DbType = DbType.Int32;
             
-            await command.ExecuteNonQueryAsync();
+            var transaction = await db.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
+            await command.ExecuteNonQueryAsync(ct);
+            await transaction.CommitAsync(ct);
         }
         catch (Exception e)
         {

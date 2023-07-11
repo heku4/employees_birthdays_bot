@@ -1,6 +1,6 @@
 using System.Text;
 using BirthdayBot.Core.Models;
-using BirthdayBot.Core.Services.DbRepositiry;
+using BirthdayBot.Core.Services.DbRepository;
 
 namespace BirthdayBot.Core.Services;
 
@@ -15,14 +15,14 @@ public class BirthdayService
         _sqliteEmployeesOperations = sqliteEmployeesOperations;
     }
 
-    public async Task AddEmployee(string fullName, int day, int month)
+    public async Task AddEmployee(string fullName, int day, int month, CancellationToken ct)
     {
-        await _sqliteEmployeesOperations.AddEmployee(fullName, day, month);
+        await _sqliteEmployeesOperations.AddEmployee(fullName, day, month, ct);
     }
 
-    public async Task RemoveEmployee(int id)
+    public async Task RemoveEmployee(int id, CancellationToken ct)
     {
-        await _sqliteEmployeesOperations.RemoveEmployee(id);
+        await _sqliteEmployeesOperations.RemoveEmployee(id, ct);
     }
     
     public async Task<string> GetBirthdays()
