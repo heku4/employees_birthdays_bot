@@ -1,3 +1,4 @@
+using BirthdayBot.Configuration;
 using BirthdayBot.Core.Models;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -14,13 +15,16 @@ public class UpdateHandler : IUpdateHandler
     private readonly ITelegramBotClient _botClient;
     private readonly ILogger<UpdateHandler> _logger;
     private readonly BirthdayService _birthdayService;
+    private readonly MainConfiguration _configuration;
     private Mode _mode;
 
-    public UpdateHandler(ITelegramBotClient botClient, ILogger<UpdateHandler> logger, BirthdayService birthdayService)
+    public UpdateHandler(ITelegramBotClient botClient,
+        ILogger<UpdateHandler> logger, BirthdayService birthdayService, MainConfiguration configuration)
     {
         _botClient = botClient;
         _logger = logger;
         _birthdayService = birthdayService;
+        _configuration = configuration;
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient _, Update update, CancellationToken cancellationToken)
@@ -49,9 +53,15 @@ public class UpdateHandler : IUpdateHandler
             }
         }
         
+        if (message?.Chat.Id != _configuration.GetChatId())
+        {
+            _logger.LogInformation($"Message from unknown chat: {message?.Chat.Id }");
+            return;
+        }
 
         var action = messageText.Split(' ')[0] switch
         {
+            "/check" => CheckNearestBirthdays(_botClient, message, cancellationToken),
             "/get_all" => SendAllEmployeesList(_botClient, message, cancellationToken),
             "/get_current" => SendThisMonthEmployeesList(_botClient, message, cancellationToken),
             "/get_next" => SendNextMonthEmployeesList(_botClient, message, cancellationToken),
@@ -79,19 +89,28 @@ public class UpdateHandler : IUpdateHandler
                 {
                     new[]
                     {
-                        InlineKeyboardButton.WithCallbackData("Проверить  birthdays", "/check"),
+                        InlineKeyboardButton.WithCallbackData("Проверить ближайшие ДР", "/check"),
+                    },
+                    new []
+                    {
                         InlineKeyboardButton.WithCallbackData("Показать всех", "/get_all"),
                     },
                     new[]
                     {
-                        InlineKeyboardButton.WithCallbackData("Показать в этом месяце", "/get_current"),
-                        InlineKeyboardButton.WithCallbackData("ПОказать следующий месяц", "/get_next"),
+                        InlineKeyboardButton.WithCallbackData("Показать ДР в этом месяце", "/get_current"),
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData("Показать ДР в следующий месяц", "/get_next"),
                     },
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData("Добавить сотрудника", "add"),
-                        InlineKeyboardButton.WithCallbackData("Убрать сотрудника", "remove"),
                     },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData("Убрать сотрудника", "remove"),
+                    }
                 });
 
             return await botClient.SendTextMessageAsync(
@@ -175,6 +194,17 @@ public class UpdateHandler : IUpdateHandler
 
     #region Birthdays
 
+    private async Task<Message> CheckNearestBirthdays(ITelegramBotClient botClient, Message message,
+        CancellationToken cancellationToken)
+    {
+        var allBdText = await _birthdayService.GetClosestBirthdays();
+        return await botClient.SendTextMessageAsync(
+            chatId: message.Chat.Id,
+            text: allBdText,
+            cancellationToken: cancellationToken);
+    }
+
+    
     private async Task<Message> SendAllEmployeesList(ITelegramBotClient botClient, Message message,
         CancellationToken cancellationToken)
     {
@@ -215,6 +245,16 @@ public class UpdateHandler : IUpdateHandler
             var birthDay = int.Parse(messageParts[1].Trim());
             var birthMonth = int.Parse(messageParts[2].Trim());
 
+            if (birthDay < 1 || birthDay > 31)
+            {
+                throw new ArgumentException($"Check birth day value");
+            }
+            
+            if (birthMonth < 1 || birthMonth > 12)
+            {
+                throw new ArgumentException($"Check birth month value");
+            }
+            
             await _birthdayService.AddEmployee(fullName, birthDay, birthMonth, cancellationToken);
         
             return await botClient.SendTextMessageAsync(

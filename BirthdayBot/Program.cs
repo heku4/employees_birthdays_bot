@@ -1,30 +1,45 @@
 using BirthdayBot;
+using BirthdayBot.Configuration;
 using BirthdayBot.Core.Services;
 using BirthdayBot.Core.Services.DbRepository;
 using Telegram.Bot;
 using Telegram.Bot.Services;
 
+DotNetEnv.Env.Load();
+var token = DotNetEnv.Env.GetString("BOT_TOKEN");
+var chatId = DotNetEnv.Env.GetInt("BOT_CHATID");
+
+if (string.IsNullOrWhiteSpace(token))
+{
+    Console.Error.WriteLine("No bot token from environment");
+    Environment.Exit(1);
+}
+
+if (chatId == 0)
+{
+    Console.Error.WriteLine("Invalid chatId");
+    Environment.Exit(1);
+}
+
+
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-        // Register Bot configuration
         services.Configure<BotConfiguration>(
             context.Configuration.GetSection(BotConfiguration.Configuration));
-
-        // Register named HttpClient to benefits from IHttpClientFactory
-        // and consume it with ITelegramBotClient typed client.
-        // More read:
-        //  https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-5.0#typed-clients
-        //  https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests
+        
         services.AddHttpClient("telegram_bot_client")
             .AddTypedClient<ITelegramBotClient>((httpClient, sp) =>
             {
                 BotConfiguration? botConfig = sp.GetConfiguration<BotConfiguration>();
+                botConfig.BotToken = token;
                 TelegramBotClientOptions options = new(botConfig.BotToken);
                 return new TelegramBotClient(options, httpClient);
             });
-            
 
+
+        var mainConfiguration = new MainConfiguration(token, chatId);
+        services.AddSingleton(mainConfiguration);
         services.AddScoped<UpdateHandler>();
         services.AddScoped<ReceiverService>();
         services.AddHostedService<PollingService>();
@@ -51,5 +66,5 @@ public class BotConfiguration
 {
     public static readonly string Configuration = "BotConfiguration";
 
-    public string BotToken { get; set; } = "";
+    public string BotToken { get; set; } = string.Empty;
 }

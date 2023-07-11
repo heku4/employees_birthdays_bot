@@ -1,5 +1,6 @@
 using BirthdayBot.Core.Models;
 using System.Data.SQLite;
+using BirthdayBot.Configuration;
 using BirthdayBot.Core.Services.DbRepository;
 using Telegram.Bot;
 
@@ -10,12 +11,17 @@ public class BirthDayChecker : BackgroundService
     private readonly BirthdayService _birthdayService;
     private readonly ITelegramBotClient _botClient; 
     private readonly ILogger<BirthDayChecker> _logger;
+    private readonly MainConfiguration _configuration;
 
-    public BirthDayChecker(ILogger<BirthDayChecker> logger, ITelegramBotClient botClient, BirthdayService birthdayService)
+    public BirthDayChecker(ILogger<BirthDayChecker> logger, 
+        ITelegramBotClient botClient,
+        BirthdayService birthdayService,
+        MainConfiguration configuration)
     {
         _logger = logger;
         _botClient = botClient;
         _birthdayService = birthdayService;
+        _configuration = configuration;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -28,7 +34,7 @@ public class BirthDayChecker : BackgroundService
                 if (!string.IsNullOrWhiteSpace(birthdays))
                 {
                     await _botClient.SendTextMessageAsync(
-                        chatId: 793853813,
+                        chatId: _configuration.GetChatId(),
                         text: birthdays,
                         cancellationToken: stoppingToken);
                 }
@@ -37,12 +43,12 @@ public class BirthDayChecker : BackgroundService
                 if (now.Hour < 15)
                 {
                     var secondAlarmTime = new DateTime(now.Year, now.Month, now.Day, 15, 0, 0);
-                    _logger.LogInformation(secondAlarmTime.ToString("u").Replace(" ", "T"));
+                    _logger.LogInformation($"Next alarm on: {secondAlarmTime.ToString("u").Replace(" ", "T")}");
                     await Task.Delay(secondAlarmTime - now, stoppingToken);
                 }
                 
                 var nextDayAlarm = new DateTime(now.Year, now.Month, now.Day + 1, 10, 0, 0);
-                _logger.LogInformation(nextDayAlarm.ToString("u").Replace(" ", "T"));
+                _logger.LogInformation($"Next alarm on: {nextDayAlarm.ToString("u").Replace(" ", "T")}");
                 await Task.Delay(nextDayAlarm - now, stoppingToken);
             }
             catch (Exception e)
