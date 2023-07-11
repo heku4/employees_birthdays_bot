@@ -5,7 +5,6 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BirthdayBot.Core.Services;
@@ -59,7 +58,7 @@ public class UpdateHandler : IUpdateHandler
             return;
         }
 
-        var action = messageText.Split(' ')[0] switch
+        var action = messageText.Split(' ')[0].ToLower() switch
         {
             "/check" => CheckNearestBirthdays(_botClient, message, cancellationToken),
             "/get_all" => SendAllEmployeesList(_botClient, message, cancellationToken),
@@ -71,8 +70,15 @@ public class UpdateHandler : IUpdateHandler
             "/throw" => FailingHandler(_botClient, message, cancellationToken),
             "/drop" => DropMode(_botClient, message, cancellationToken),
             "/help" => Usage(_botClient, message, cancellationToken),
-            _ => HandleMessage(_botClient, message, cancellationToken)
+            _ => null
+           
         };
+
+        if (action is null)
+        {
+            return;
+        }
+        
         Message sentMessage = await action;
         _logger.LogInformation("The message was sent with id: {SentMessageId}", sentMessage.MessageId);
 

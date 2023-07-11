@@ -7,7 +7,8 @@ using Telegram.Bot.Services;
 
 DotNetEnv.Env.Load();
 var token = DotNetEnv.Env.GetString("BOT_TOKEN");
-var chatId = DotNetEnv.Env.GetInt("BOT_CHATID");
+var connString = DotNetEnv.Env.GetString("CONN_STRING");
+var chatIdFromEnv = DotNetEnv.Env.GetString("BOT_CHATID");
 
 if (string.IsNullOrWhiteSpace(token))
 {
@@ -15,7 +16,13 @@ if (string.IsNullOrWhiteSpace(token))
     Environment.Exit(1);
 }
 
-if (chatId == 0)
+if (string.IsNullOrWhiteSpace(connString))
+{
+    Console.Error.WriteLine("Invalid connection string");
+    Environment.Exit(1);
+}
+
+if (!long.TryParse(chatIdFromEnv, out long chatId))
 {
     Console.Error.WriteLine("Invalid chatId");
     Environment.Exit(1);
@@ -38,7 +45,7 @@ IHost host = Host.CreateDefaultBuilder(args)
             });
 
 
-        var mainConfiguration = new MainConfiguration(token, chatId);
+        var mainConfiguration = new MainConfiguration(token, chatId, connString);
         services.AddSingleton(mainConfiguration);
         services.AddScoped<UpdateHandler>();
         services.AddScoped<ReceiverService>();

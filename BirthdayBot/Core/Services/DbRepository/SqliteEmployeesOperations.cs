@@ -1,5 +1,6 @@
 using System.Data;
 using System.Data.SQLite;
+using BirthdayBot.Configuration;
 using BirthdayBot.Core.Models;
 
 namespace BirthdayBot.Core.Services.DbRepository;
@@ -7,11 +8,12 @@ namespace BirthdayBot.Core.Services.DbRepository;
 public class SqliteEmployeesOperations
 {
     private readonly ILogger<SqliteEmployeesOperations> _logger;
-    private readonly string _connectionString = "etc/b_bot.db";
+    private readonly string _connectionString;
 
-    public SqliteEmployeesOperations(ILogger<SqliteEmployeesOperations> logger)
+    public SqliteEmployeesOperations(ILogger<SqliteEmployeesOperations> logger, MainConfiguration configuration)
     {
         _logger = logger;
+        _connectionString = configuration.GetConnectionString();
     }
 
     public async Task<bool> CheckConnection()
