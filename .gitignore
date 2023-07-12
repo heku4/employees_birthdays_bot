@@ -166,4 +166,4 @@ Desktop.ini
 .DS_Store
 
 _NCrunch*
-#.env
+.env
