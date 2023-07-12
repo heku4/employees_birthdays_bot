@@ -13,7 +13,7 @@ public class SqliteEmployeesOperations
     public SqliteEmployeesOperations(ILogger<SqliteEmployeesOperations> logger, MainConfiguration configuration)
     {
         _logger = logger;
-        _connectionString = configuration.GetConnectionString();
+        _connectionString = configuration.ConnectionString;
     }
 
     public async Task<bool> CheckConnection()
