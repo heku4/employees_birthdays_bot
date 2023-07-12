@@ -34,7 +34,7 @@ public class BirthDayChecker : BackgroundService
                 if (!string.IsNullOrWhiteSpace(birthdays))
                 {
                     await _botClient.SendTextMessageAsync(
-                        chatId: _configuration.GetChatId(),
+                        chatId: _configuration.ChatId,
                         text: birthdays,
                         cancellationToken: stoppingToken);
                 }

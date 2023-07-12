@@ -5,33 +5,17 @@ using BirthdayBot.Core.Services.DbRepository;
 using Telegram.Bot;
 using Telegram.Bot.Services;
 
+var configurationFile = $"etc{Path.DirectorySeparatorChar}config.json";
+
 DotNetEnv.Env.Load();
-var token = DotNetEnv.Env.GetString("BOT_TOKEN");
-var connString = DotNetEnv.Env.GetString("CONN_STRING");
-var chatIdFromEnv = DotNetEnv.Env.GetString("BOT_CHATID");
-
-if (string.IsNullOrWhiteSpace(token))
-{
-    Console.Error.WriteLine("No bot token from environment");
-    Environment.Exit(1);
-}
-
-if (string.IsNullOrWhiteSpace(connString))
-{
-    Console.Error.WriteLine("Invalid connection string");
-    Environment.Exit(1);
-}
-
-if (!long.TryParse(chatIdFromEnv, out long chatId))
-{
-    Console.Error.WriteLine("Invalid chatId");
-    Environment.Exit(1);
-}
-
-
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
+        var config = new MainConfiguration();
+        var configuration = new ConfigurationBuilder().AddJsonFile(configurationFile).AddEnvironmentVariables("BOT_").Build();
+        configuration.Bind(config);
+        services.AddSingleton(config);
+        
         services.Configure<BotConfiguration>(
             context.Configuration.GetSection(BotConfiguration.Configuration));
         
@@ -39,14 +23,11 @@ IHost host = Host.CreateDefaultBuilder(args)
             .AddTypedClient<ITelegramBotClient>((httpClient, sp) =>
             {
                 BotConfiguration? botConfig = sp.GetConfiguration<BotConfiguration>();
-                botConfig.BotToken = token;
+                botConfig.BotToken = config.Token;
                 TelegramBotClientOptions options = new(botConfig.BotToken);
                 return new TelegramBotClient(options, httpClient);
             });
 
-
-        var mainConfiguration = new MainConfiguration(token, chatId, connString);
-        services.AddSingleton(mainConfiguration);
         services.AddScoped<UpdateHandler>();
         services.AddScoped<ReceiverService>();
         services.AddHostedService<PollingService>();

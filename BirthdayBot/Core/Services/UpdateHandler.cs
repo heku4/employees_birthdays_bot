@@ -52,7 +52,7 @@ public class UpdateHandler : IUpdateHandler
             }
         }
         
-        if (message?.Chat.Id != _configuration.GetChatId())
+        if (message?.Chat.Id != _configuration.ChatId)
         {
             _logger.LogInformation($"Message from unknown chat: {message?.Chat.Id }");
             return;
