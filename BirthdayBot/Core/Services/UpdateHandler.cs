@@ -71,7 +71,7 @@ public class UpdateHandler : IUpdateHandler
             "/throw" => FailingHandler(_botClient, message, cancellationToken),
             "/drop" => DropMode(_botClient, message, cancellationToken),
             "/help" => Usage(_botClient, message, cancellationToken),
-            _ => null
+            _ => _mode != Mode.Default ? HandleMessage(_botClient, message, cancellationToken) : null
            
         };
 
@@ -157,14 +157,6 @@ public class UpdateHandler : IUpdateHandler
     {
         try
         {
-            if (_mode == Mode.Default)
-            {
-                return await botClient.SendTextMessageAsync(
-                    chatId: message.Chat.Id,
-                    text: "Попробуйте /help или /start",
-                    cancellationToken: cancellationToken);
-            }
-
             if (_mode == Mode.Add)
             {
                 await AddEmployee(botClient, message, cancellationToken);
@@ -205,6 +197,11 @@ public class UpdateHandler : IUpdateHandler
         CancellationToken cancellationToken)
     {
         var allBdText = await _birthdayService.GetClosestBirthdays();
+        if (string.IsNullOrWhiteSpace(allBdText))
+        {
+            allBdText = "No Birthdays";
+        }
+        
         return await botClient.SendTextMessageAsync(
             chatId: message.Chat.Id,
             text: allBdText,
@@ -386,7 +383,7 @@ public class UpdateHandler : IUpdateHandler
             await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
     }
 
-    public async Task<Message> SendChatId(ITelegramBotClient botClient, Message message,
+    private async Task<Message> SendChatId(ITelegramBotClient botClient, Message message,
         CancellationToken cancellationToken)
     {
         return await botClient.SendTextMessageAsync(
