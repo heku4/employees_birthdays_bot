@@ -55,6 +55,7 @@ public class UpdateHandler : IUpdateHandler
         if (message?.Chat.Id != _configuration.ChatId)
         {
             _logger.LogInformation($"Message from unknown chat: {message?.Chat.Id }");
+            await SendChatId(_botClient, message!, cancellationToken);
             return;
         }
 
@@ -383,5 +384,15 @@ public class UpdateHandler : IUpdateHandler
         // Cooldown in case of network connection error
         if (exception is RequestException)
             await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+    }
+
+    public async Task<Message> SendChatId(ITelegramBotClient botClient, Message message,
+        CancellationToken cancellationToken)
+    {
+        return await botClient.SendTextMessageAsync(
+            chatId: message.Chat.Id,
+            text: $"This chat is not allowed. Your chatId: {message.Chat.Id.ToString()}",
+            replyMarkup: new ReplyKeyboardRemove(),
+            cancellationToken: cancellationToken);
     }
 }
