@@ -197,11 +197,6 @@ public class UpdateHandler : IUpdateHandler
         CancellationToken cancellationToken)
     {
         var allBdText = await _birthdayService.GetClosestBirthdays();
-        if (string.IsNullOrWhiteSpace(allBdText))
-        {
-            allBdText = "No Birthdays";
-        }
-        
         return await botClient.SendTextMessageAsync(
             chatId: message.Chat.Id,
             text: allBdText,

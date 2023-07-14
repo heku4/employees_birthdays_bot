@@ -47,8 +47,15 @@ public class BirthdayService
         {
             sb.Append($"Сегодня День рождения у:{Environment.NewLine}{FormatEmployeesList(zeroDayGuys)}{Environment.NewLine}");
         }
+
+        var result = sb.ToString();
+
+        if (string.IsNullOrWhiteSpace(result))
+        {
+            result = "No employees";
+        }
         
-        return sb.ToString();
+        return result;
     }
     
     public async Task<string> GetBirthdays()
