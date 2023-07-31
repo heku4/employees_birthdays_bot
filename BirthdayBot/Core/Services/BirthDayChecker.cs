@@ -28,6 +28,8 @@ public class BirthDayChecker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
+            var now = DateTime.Now;
+            var nextDayAlarm = now.Date + new TimeSpan(1, 10, 0, 0);
             try
             {
                 var birthdays = await _birthdayService.GetClosestBirthdays();
@@ -39,22 +41,22 @@ public class BirthDayChecker : BackgroundService
                         cancellationToken: stoppingToken);
                 }
                 
-                var now = DateTime.Now;
                 if (now.Hour < 15)
                 {
-                    var secondAlarmTime = new DateTime(now.Year, now.Month, now.Day, 15, 0, 0);
+                    var secondAlarmTime = now.Date + new TimeSpan(15, 0, 0);
                     _logger.LogInformation($"Next alarm on: {secondAlarmTime.ToString("u").Replace(" ", "T")}");
+
                     await Task.Delay(secondAlarmTime - now, stoppingToken);
                 }
-                
-                var nextDayAlarm = new DateTime(now.Year, now.Month, now.Day + 1, 10, 0, 0);
+
                 _logger.LogInformation($"Next alarm on: {nextDayAlarm.ToString("u").Replace(" ", "T")}");
+
                 await Task.Delay(nextDayAlarm - now, stoppingToken);
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(nextDayAlarm - now, stoppingToken);
             }
         }
     }

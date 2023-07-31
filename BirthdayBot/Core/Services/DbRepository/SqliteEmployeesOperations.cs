@@ -54,12 +54,20 @@ public class SqliteEmployeesOperations
             {
                 while (await reader.ReadAsync())
                 {
-                    employees.Add(new Employee(
-                        reader.GetInt32(0),
-                        reader.GetString(1),
-                        reader.GetInt32(2),
-                        reader.GetInt32(3))
-                    );
+                    var id = reader.GetInt32(0);
+                    var name = reader.GetString(1);
+                    var dayNumber = reader.GetInt32(2);
+                    var monthNumber = reader.GetInt32(3);
+                    try
+                    {
+                        employees.Add(new Employee(id, name, dayNumber, monthNumber));
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError($"Failed to check birthday of employee '{name}', day: '{dayNumber}', month: '{monthNumber}'." +
+                                         $" Exception message: {e.Message}");
+                    }
+                    
                 }
             }
 
